@@ -1,4 +1,5 @@
 from matrix import Matrix
+import math
 
 class PolynomialRegressor:
 
@@ -58,10 +59,10 @@ class PolynomialRegressor:
         return self.coefficients
 
     def evaluate_with_inputs(self, input):
-        evaluation = 0
+        exponent = 0
         for i in range(len(self.coefficients)):
-            evaluation += self.coefficients[i] * input[i]
-        return evaluation
+            exponent += self.coefficients[i] * input[i]
+        return 10/(1 + math.exp(1)**exponent)
 
     def plot(self):
         Title = 'y = {} + {}x + {}x^2'.format(round(self.coeff[0],2), round(self.coeff[1],2), round(self.coeff[2],2))

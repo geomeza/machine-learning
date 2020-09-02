@@ -1,2 +1,2 @@
 language = "python3"
-run = "python3 analysis/dummy_interactive_sandwich_ratings.py"
+run = "python3 tests/test_dataframe.py"
