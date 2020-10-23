@@ -2,21 +2,21 @@ import sys
 sys.path.append('src')
 from dataframe import DataFrame
 
-# data_dict = {
-#     'Pete': [1, 0, 1, 0],
-#     'John': [2, 1, 0, 2],
-#     'Sara': [3, 1, 4, 0]
-# }
-# df1 = DataFrame(data_dict, column_order = ['Pete', 'John', 'Sara'])
+data_dict = {
+    'Pete': [1, 0, 1, 0],
+    'John': [2, 1, 0, 2],
+    'Sara': [3, 1, 4, 0]
+}
+df1 = DataFrame(data_dict, column_order = ['Pete', 'John', 'Sara'])
 
-# assert df1.data_dict == data_dict, 'Wrong Dictionary'
+assert df1.data_dict == data_dict, 'Wrong Dictionary'
 
-# arr = [[1, 2, 3],[0, 1, 1],[1, 0, 4],[0, 2, 0]]
-# df1.to_array()
-# assert df1.array == arr, 'Wrong Array'
-# print('Array Test Passed')
-# assert df1.columns == ['Pete', 'John', 'Sara'], 'Wrong Columns'
-# print('column test passed')
+arr = [[1, 2, 3], [0, 1, 1], [1, 0, 4], [0, 2, 0]]
+print(df1.to_array())
+assert df1.array == arr, 'Wrong Array'
+print('Array Test Passed')
+assert df1.columns == ['Pete', 'John', 'Sara'], 'Wrong Columns'
+print('column test passed')
 
 # df2 = df1.filter_columns(['Sara', 'Pete'])
 # arr = [[3, 1],[1, 0],[4, 1],[0, 0]]
@@ -73,29 +73,29 @@ from dataframe import DataFrame
 # assert df4.array == [[1, 0, 'Anna', 'a'], [0, 0, 'Bill', 'b'], [0, 1, 'Cayden', 'c'], [0, 0, 'Daphnie', 'd']], 'Wrong Array'
 
 # print('Passed')
-print('--------------------------')
-data_dict = {
-    'beef': [0, 0, 0, 0, 5, 5, 5, 5, 0, 0, 0, 0, 5, 5, 5, 5],
-    'pb': [0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 5, 5],
-    'condiments': [[],['mayo'],['jelly'],['mayo','jelly'],
-                   [],['mayo'],['jelly'],['mayo','jelly'],
-                   [],['mayo'],['jelly'],['mayo','jelly'],
-                   [],['mayo'],['jelly'],['mayo','jelly']],
-    'rating': [1, 1, 4, 0, 4, 8, 1, 0, 5, 0, 9, 0, 0, 0, 0, 0]
-}
+# print('--------------------------')
+# data_dict = {
+#     'beef': [0, 0, 0, 0, 5, 5, 5, 5, 0, 0, 0, 0, 5, 5, 5, 5],
+#     'pb': [0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 5, 5],
+#     'condiments': [[],['mayo'],['jelly'],['mayo','jelly'],
+#                    [],['mayo'],['jelly'],['mayo','jelly'],
+#                    [],['mayo'],['jelly'],['mayo','jelly'],
+#                    [],['mayo'],['jelly'],['mayo','jelly']],
+#     'rating': [1, 1, 4, 0, 4, 8, 1, 0, 5, 0, 9, 0, 0, 0, 0, 0]
+# }
 
-df = DataFrame(data_dict, column_order = ['beef', 'pb', 'condiments'])
-print(df.columns)
-df.to_array()
-print(df.array)
-df = df.create_dummy_variables()
-print(df.columns)
-df.to_array()
-print(df.array)
-df = df.append_columns({
-    'constant': [1 for _ in range(len(data_dict['rating']))],
-    'rating': data_dict['rating']
-})
-print(df.columns)
-df.to_array()
-print(df.array)
+# df = DataFrame(data_dict, column_order = ['beef', 'pb', 'condiments'])
+# print(df.columns)
+# df.to_array()
+# print(df.array)
+# df = df.create_dummy_variables()
+# print(df.columns)
+# df.to_array()
+# print(df.array)
+# df = df.append_columns({
+#     'constant': [1 for _ in range(len(data_dict['rating']))],
+#     'rating': data_dict['rating']
+# })
+# print(df.columns)
+# df.to_array()
+# print(df.array)

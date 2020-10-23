@@ -30,8 +30,6 @@ regressor = LogisticRegressor(df, prediction_column = 'rating', max_val = 10)
 
 assert regressor.multipliers == [-0.039, -0.0205, 1.7483, -0.3978, 0.1497, -0.7485, 0.4682, 0.3296, -0.5288, 2.6441, 1.0125], 'Wong multipliers'
 
-print(regressor.dataframe.to_array())
-
 assert regressor.predict({
     'beef': 5,
     'pb': 5,

@@ -1,27 +1,15 @@
 class DataFrame:
-    def __init__(self, data,  column_order):
+    def __init__(self, data,  column_order = None):
         self.data_dict = data
-        self.columns = column_order
+        if column_order is not None:
+            self.columns = column_order
+        else:
+            self.columns = [key for key in data.keys()]
         self.array = None
 
-    def transform_to_array(self, column_order):
-        columns = []
-        for i in range(len(self.data_dict[column_order[0]])):
-            columns.append([])
-            for j in self.data_dict.keys():
-                if j in column_order:
-                    columns[i].append(0)
-        for key in self.data_dict.keys():
-            if key in column_order:
-                index = column_order.index(key)
-                val_index = 0
-                for value in self.data_dict[key]:
-                    columns[val_index][index] = self.data_dict[key][val_index]
-                    val_index += 1
-        return columns
-
     def to_array(self):
-        self.array = self.transform_to_array(self.columns)
+        cols = [self.data_dict[key] for key in self.data_dict.keys()]
+        self.array = [list(arr) for arr in zip(*cols)]
         return self.array
 
     def filter_columns(self, columns):
