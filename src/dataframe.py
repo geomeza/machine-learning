@@ -102,16 +102,88 @@ class DataFrame:
                     new_data[ind_of_dummy].append(0)
         return new_data
 
-data_dict = {
-    'id': [1, 2, 3, 4],
-    'color': ['blue', 'yellow', 'green', 'yellow']
-}
+    @classmethod
+    def from_array(cls, arr, columns):
+        data_dict = {}
+        for column in columns:
+            col_index = columns.index(column)
+            data_dict.update({column : [data[col_index] for data in arr]})
+        return cls(data_dict)
 
-# df1 = DataFrame(data_dict, column_order = ['id', 'color'])
-# df2 = df1.create_dummy_variables()
-# print(df2.to_array())
-# print(df2.data_dict)
+    def select_columns(self, columns):
+        return DataFrame({column: self.data_dict[column] for column in columns})
 
-# df3 = df2.remove_columns(['id', 'color_yellow'])
-# print(df3.columns)
+    def select_rows(self, indices):
+        data_dict = {}
+        for key,val in self.data_dict.items():
+            data_dict.update({key: [val[index] for index in indices]})
+        return DataFrame(data_dict)
 
+    def transform_person_data(self, data):
+        return {self.columns[i]: data[i] for i in range(len(data))}
+
+    def select_rows_where(self, func):
+        selected_rows = []
+        transformed_people = [self.transform_person_data(data) for data in self.to_array()]
+        for i in range(len(transformed_people)):
+            if func(transformed_people[i]):
+                selected_rows.append(self.to_array()[i])
+        return DataFrame.from_array(selected_rows, self.columns)
+
+    def order_by(self, column, ascending = True):
+        if ascending:
+            order = self.sorted_indicies(self.data_dict[column])
+            return DataFrame.from_array([self.to_array()[i] for i in order], self.columns)
+        else:
+            order = self.sorted_indicies(self.data_dict[column])[::-1]
+            return DataFrame.from_array([self.to_array()[i] for i in order], self.columns)
+
+        #returns a new dataframe with the rows now sorted in either alphabetical or numerical order 
+
+    def sorted_indicies(self, arr):
+        return [y for x,y in sorted([(arr[i],i) for i in range(len(arr))])]
+
+    # def order_by(self, column, ascending = True):
+    #     data = self.to_array()
+    #     column_data = self.data_dict[column]
+    #     if ascending:
+    #         column_data.sort()
+    #     else:
+    #         column_data.sort(reverse = True)
+    #     sorted_array = [[] for _ in column_data]
+    #     for val in column_data:
+    #         index = column_data.index(val)
+    #         for row in data:
+    #             if val in row:
+    #                 sorted_array[index] = row
+    #     print(data[11])
+    #     print(sorted_array.index([]), 'INDEX')
+    #     print(column_data.index(0.38858718455450897), 'INDEX')
+    #     # print(sorted_array, 'ARRAY')
+    #     # print(self.columns, sorted_array)
+    #     return DataFrame.from_array(self.columns, sorted_array)
+
+
+# columns = ['firstname', 'lastname', 'age']
+# arr = [['Kevin', 'Fray', 5],
+#            ['Charles', 'Trapp', 17],
+#            ['Anna', 'Smith', 13],
+#            ['Sylvia', 'Mendez', 9]]
+# df = DataFrame.from_array(columns, arr)
+# print(df.to_array())
+
+# print(df.select_columns(['firstname','age']).to_array())
+# [['Kevin', 5],
+# ['Charles', 17],
+# ['Anna', 13],
+# ['Sylvia', 9]]
+
+# print(df.select_rows([1,3]).to_array())
+
+# print(df.select_rows_where(
+#     lambda row: len(row['firstname']) >= len(row['lastname'])
+#                 and row['age'] > 10
+#     ).to_array())
+
+# print(df.order_by('age', ascending=True).to_array())
+# print(df.order_by('firstname', ascending=False).to_array())
