@@ -56,7 +56,7 @@ assert dt.root.high.impurity == 0
 print('passed')
 
 print('\nTesting root low possible splits')
-rounded = [[x[0],x[1],round(x[2],3)] for x in dt.root.low.possible_splits.to_array()]
+rounded = [[entry[0], entry[1], round(entry[2], 3)] for entry in dt.root.low.possible_splits.to_array()]
 assert rounded == [['x', 1.5,  0.125], ['x', 2.5,  0.375], ['y', 11.5, 0.042]]
 print('passed')
 
