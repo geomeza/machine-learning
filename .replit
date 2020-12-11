@@ -1,2 +1,2 @@
 language = "python3"
-run = "python3 tests/test_leave_one_out_cross_validator.py"
+run = "python3 tests/test_decision_tree.py"

@@ -24,7 +24,7 @@ df = DataFrame.from_array( [['Shortbread'  ,     0.14     ,       0.14     ,    
 ['Shortbread'  ,     0.15     ,       0.23     ,      0.30     ,     0.32      ],
 ['Shortbread'  ,     0.20     ,       0.10     ,      0.30     ,     0.40      ]], columns = ['Cookie Type' ,'Portion Eggs','Portion Butter','Portion Sugar','Portion Flour' ])
 
-knn = KNearestNeighborsClassifier(k=51)
+knn = KNearestNeighborsClassifier(k=5)
 
 cv = LeaveOneOutCrossValidator(knn, df, prediction_column='Cookie Type')
 

@@ -4,6 +4,7 @@ class Node:
 
     def __init__(self, df):
         self.df = df
+        self.val = None
         self.low = None
         self.high = None
         self.row_indices = self.df.data_dict['indices']
@@ -72,19 +73,27 @@ class Node:
         self.best_split_index = self.df.columns.index(self.possible_splits.to_array()[index][0])
         self.best_split = (self.possible_splits.to_array()[index][0],self.possible_splits.to_array()[index][1])
 
-    def split(self):
-        if self.final_split is False:
-            low = []
-            high = []
-            for entry in self.df.to_array():
-                if entry[self.best_split_index] < self.best_split[1]:
-                    low.append(entry)
-                elif entry[self.best_split_index] >= self.best_split[1]:
-                    high.append(entry)
-            self.low = Node(DataFrame.from_array(low, self.df.columns))
-            self.high = Node(DataFrame.from_array(high, self.df.columns))
-            self.low.split()
-            self.high.split()
+    def split(self, if_once = False):
+        if self.low is None and self.high is None:
+            if self.final_split is False:
+                low = []
+                high = []
+                for entry in self.df.to_array():
+                    if entry[self.best_split_index] < self.best_split[1]:
+                        low.append(entry)
+                    elif entry[self.best_split_index] >= self.best_split[1]:
+                        high.append(entry)
+                self.low = Node(DataFrame.from_array(low, self.df.columns))
+                self.high = Node(DataFrame.from_array(high, self.df.columns))
+                if not if_once:
+                    self.low.split()
+                    self.high.split()
+            else:
+                return
         else:
+            if self.low is not None:
+                self.low.split(if_once)
+            if self.high is  not None:
+                self.high.split(if_once)
             return
             
