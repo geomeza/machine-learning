@@ -7,7 +7,7 @@ def transform_data(data):
     trigonometry_dict = {str(i):[] for i in range(4)}
     trigonometry_dict.update({'y' : []})
     for x,y in data:
-        adjusted_data = [math.ln(x), math.cos(x), math.sin(2*x), math.cos(2*x)]
+        adjusted_data = [math.log(x), math.cos(x), math.sin(2*x), math.cos(2*x)]
         for i in range(len(adjusted_data)):
             trigonometry_dict[str(i)].append(adjusted_data[i])
         trigonometry_dict['y'].append(y)

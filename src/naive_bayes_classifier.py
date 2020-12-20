@@ -1,36 +1,26 @@
-from dataframe import DataFrame
-
 class NaiveBayesClassifier:
-    def __init__(self, dataframe, dependent_var):
-        self.df = dataframe
-        self.dependant_var = dependent_var
 
-    def probability(self, column, identifier):
-        return sum([1 for entry in self.df.data_dict[column] if entry == identifier])/len(self.df.data_dict[column])
+    def __init__(self, df, dependent_variable):
+        self.df = df
+        self.dep_var = dependent_variable
 
-    def conditional_probability(self,probability, given):
-        total = count = 0
-        arr = self.df.to_array()
-        p_i = self.df.columns.index(probability[0])
-        g_i = self.df.columns.index(given[0])
-        for i in range(len(arr)):
-            if arr[i][g_i] == given[1]:
-                total += 1
-                if arr[i][p_i] == probability[1]:
-                    count += 1
-        return count/total
+    def probability(self, column, boolean):
+        stats = self.df.data_dict[column]
+        return stats.count(boolean)/len(stats)
 
-    def likelihood(self,probability,observations):
-        result = 1
-        for entry in observations:
-            result*=self.conditional_probability((entry,observations[entry]),probability)
-        return self.probability(probability[0],probability[1])*result
+    def conditional_probability(self, probability, given):
+        all_given = self.df.select_rows_where(lambda x: x[given[0]] == given[1])
+        true_conditions = self.df.select_rows_where(lambda x: x[given[0]] == given[1] and x[probability[0]] == probability[1])
+        return len(true_conditions.to_array())/len(all_given.to_array())
 
-    def classify(self,observations):
-        _true = self.likelihood((self.dep_var,True),observations)
-        _false = self.likelihood((self.dep_var,False),observations)
-        if _true > _false:
-            return self.dep_var + "_True"
-        else:
-            return self.dep_var + "_False"
+    def likelihood(self,probability,observed_features):
+        result = self.probability(probability[0], probability[1])
+        for entry in observed_features:
+            result *= self.conditional_probability((entry, observed_features[entry]), given = probability)
+        return result
 
+    def classify(self, observed_features):
+        true_classified = self.likelihood((self.dep_var, True), observed_features)
+        false_classified = self.likelihood((self.dep_var, False), observed_features)
+        return true_classified >= false_classified
+    
