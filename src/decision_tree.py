@@ -3,9 +3,10 @@ from node import Node
 
 class DecisionTree:
 
-    def __init__(self):
+    def __init__(self, split_metric):
         self.df = None
         self.root = None
+        self.split_metric = split_metric
 
     def split(self):
         self.root.split(if_once = True)
@@ -17,7 +18,18 @@ class DecisionTree:
     def initialize(self, df):
         self.df = df
         self.df = self.df.append_columns({'indices': [i for i in range(len(df.to_array()))]})
-        self.root = Node(self.df)
+        self.root = Node(self.df, split_metric = self.split_metric)
+
+    def show_tree(self, current_node = None, iter = 0):
+        if current_node is None and iter == 0:
+            current_node = self.root
+        if current_node.impurity == 0:
+            return
+        print(current_node.best_split)
+        print(current_node.impurity)
+        iter += 1
+        self.show_tree(current_node.low, iter)
+        self.show_tree(current_node.high, iter)
 
     def classify(self, point, node = None):
         if node is None:

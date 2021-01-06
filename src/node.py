@@ -1,8 +1,9 @@
+import random
 from dataframe import DataFrame
 
 class Node:
 
-    def __init__(self, df):
+    def __init__(self, df, split_metric):
         self.df = df
         self.val = None
         self.low = None
@@ -11,6 +12,7 @@ class Node:
         self.class_counts = self.count_classes()
         self.impurity = self.get_impurity()
         self.distinct_values = self.get_distinct_values()
+        self.split_metric = split_metric
         self.final_split = False
         if self.impurity != 0:
             self.possible_splits = self.get_possible_splits()
@@ -59,8 +61,8 @@ class Node:
                 low.append(point)
             elif point[axis_index] >= split:
                 high.append(point)
-        low_node = Node(DataFrame.from_array(low, self.df.columns))
-        high_node = Node(DataFrame.from_array(high, self.df.columns))
+        low_node = Node(DataFrame.from_array(low, self.df.columns), self.split_metric)
+        high_node = Node(DataFrame.from_array(high, self.df.columns), self.split_metric)
         nodes = [low_node, high_node]
         for split_node in nodes:
             goodness -= (len(split_node.row_indices)/len(self.row_indices)) * split_node.impurity
@@ -69,7 +71,10 @@ class Node:
     def get_best_split(self):
         goodness_of_all_splits = [split[2] for split in self.possible_splits.to_array()]
         best_split = max(goodness_of_all_splits)
-        index = goodness_of_all_splits.index(best_split)
+        if self.split_metric == 'gini':
+            index = goodness_of_all_splits.index(best_split)
+        elif self.split_metric == 'random':
+            index = random.randint(0, len(goodness_of_all_splits) - 1)
         self.best_split_index = self.df.columns.index(self.possible_splits.to_array()[index][0])
         self.best_split = (self.possible_splits.to_array()[index][0],self.possible_splits.to_array()[index][1])
 
@@ -83,8 +88,8 @@ class Node:
                         low.append(entry)
                     elif entry[self.best_split_index] >= self.best_split[1]:
                         high.append(entry)
-                self.low = Node(DataFrame.from_array(low, self.df.columns))
-                self.high = Node(DataFrame.from_array(high, self.df.columns))
+                self.low = Node(DataFrame.from_array(low, self.df.columns), self.split_metric)
+                self.high = Node(DataFrame.from_array(high, self.df.columns), self.split_metric)
                 if not if_once:
                     self.low.split()
                     self.high.split()
