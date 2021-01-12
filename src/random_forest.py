@@ -18,5 +18,4 @@ class RandomForest:
             prediction = tree.classify(observation)
             classifications.append(prediction)
         counted = collections.Counter(classifications)
-        print(counted)
         return list(counted.keys())[0]

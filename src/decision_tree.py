@@ -19,6 +19,7 @@ class DecisionTree:
         self.df = df
         self.df = self.df.append_columns({'indices': [i for i in range(len(df.to_array()))]})
         self.root = Node(self.df, split_metric = self.split_metric)
+        print('ditting')
 
     def show_tree(self, current_node = None, iter = 0):
         if current_node is None and iter == 0:

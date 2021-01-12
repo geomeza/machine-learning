@@ -110,6 +110,36 @@ class DataFrame:
             data_dict.update({column : [data[col_index] for data in arr]})
         return cls(data_dict)
 
+    @classmethod
+    def from_csv(cls, file_path, header = True):
+        with open(file_path, "r") as file:
+            data = file.read()  
+        lines = data.split('\n')
+        lines = [line.split("''") for line in lines if len(line) > 0]
+        for i in range(len(lines)):
+            if header and i > 0:
+                lines[i] = lines[i][0].split(",")
+        if header:
+            lines[0] = [item for item in lines[0][0].split('"') if item != ", " and len(item) > 0]
+            return cls.from_array([lines[i] for i in range(len(lines)) if i > 0], lines[0])
+        else:
+            return cls.from_array(lines, header)
+
+    def rename_columns(self, new_columns):
+        new_data_dict = {}
+        for i in range(len(new_columns)):
+            new_data_dict.update({new_columns[i] : self.data_dict[self.columns[i]]})
+        return DataFrame(new_data_dict, new_columns)
+
+    def swap_columns(self, swap1, swap2):
+        new_columns = [column for column in self.columns]
+        new_columns[swap1] = self.columns[swap2]
+        new_columns[swap2] = self.columns[swap1]
+        new_data_dict = {}
+        for column in new_columns:
+            new_data_dict.update({column : self.data_dict[column]})
+        return DataFrame(new_data_dict, new_columns)
+
     def select_columns(self, columns):
         return DataFrame({column: self.data_dict[column] for column in columns})
 
@@ -137,8 +167,6 @@ class DataFrame:
         else:
             order = self.sorted_indicies(self.data_dict[column])[::-1]
             return DataFrame.from_array([self.to_array()[i] for i in order], self.columns)
-
-        #returns a new dataframe with the rows now sorted in either alphabetical or numerical order 
 
     def sorted_indicies(self, arr):
         return [y for x,y in sorted([(arr[i],i) for i in range(len(arr))])]

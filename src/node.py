@@ -80,6 +80,7 @@ class Node:
 
     def split(self, if_once = False):
         if self.low is None and self.high is None:
+            print('splitting')
             if self.final_split is False:
                 low = []
                 high = []

@@ -1,2 +1,2 @@
 language = "python3"
-run = "python3 tests/test_random_forest.py"
+run = "python3 analysis/csv_training.py"
