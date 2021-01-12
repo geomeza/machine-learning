@@ -3,7 +3,7 @@ from dataframe import DataFrame
 
 class Node:
 
-    def __init__(self, df, split_metric):
+    def __init__(self, df, split_metric,check_splits = True):
         self.df = df
         self.val = None
         self.low = None
@@ -14,7 +14,7 @@ class Node:
         self.distinct_values = self.get_distinct_values()
         self.split_metric = split_metric
         self.final_split = False
-        if self.impurity != 0:
+        if self.impurity != 0 and check_splits:
             self.possible_splits = self.get_possible_splits()
             self.get_best_split()
         if self.impurity == 0:
@@ -61,8 +61,8 @@ class Node:
                 low.append(point)
             elif point[axis_index] >= split:
                 high.append(point)
-        low_node = Node(DataFrame.from_array(low, self.df.columns), self.split_metric)
-        high_node = Node(DataFrame.from_array(high, self.df.columns), self.split_metric)
+        low_node = Node(DataFrame.from_array(low, self.df.columns), self.split_metric, False)
+        high_node = Node(DataFrame.from_array(high, self.df.columns), self.split_metric, False)
         nodes = [low_node, high_node]
         for split_node in nodes:
             goodness -= (len(split_node.row_indices)/len(self.row_indices)) * split_node.impurity
@@ -80,8 +80,9 @@ class Node:
 
     def split(self, if_once = False):
         if self.low is None and self.high is None:
-            print('splitting')
             if self.final_split is False:
+                self.possible_splits = self.get_possible_splits()
+                self.get_best_split()
                 low = []
                 high = []
                 for entry in self.df.to_array():

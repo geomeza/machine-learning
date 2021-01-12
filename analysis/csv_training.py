@@ -2,10 +2,10 @@ import sys
 sys.path.append('src')
 from dataframe import DataFrame
 from decision_tree import DecisionTree
-from decision_tree import Node
+from node import Node
 from random_forest import RandomForest
 
-path_to_datasets = '/home/runner/machine-learning/datasets/'
+path_to_datasets = 'C:/Users/mezag/Documents/Github/machine_learning/datasets/'
 filename = 'freshman_lbs.csv' 
 filepath = path_to_datasets + filename
 df = DataFrame.from_csv(filepath)
@@ -41,11 +41,8 @@ splits = split_sets(df.to_array(), 5)
 def run_tests(training_set, testing_set, decision_tree, forest = False):
     correct = 0
     training_df = DataFrame.from_array(training_set, ['bmi', 'weight', 'class'])
-    print('fitting')
     decision_tree.fit(training_df)
-    print('fitted')
     for test in testing_set:
-        print('new test')
         test_dict = {'bmi' : test[0], 'weight' : test[1]}
         if forest:
             prediction = decision_tree.predict(test_dict)
@@ -56,6 +53,7 @@ def run_tests(training_set, testing_set, decision_tree, forest = False):
     return correct,len(testing_set)
 
 dt = DecisionTree('gini')
+
 total_correct = 0
 total = 0
 for i in range(len(splits[0])):
@@ -65,4 +63,18 @@ for i in range(len(splits[0])):
     total_correct += results[0]
 
 print(total_correct, total)
+
+forests = [1,10,100,1000]
+
+for num in forests:
+    dt = RandomForest(num)
+    total_correct = 0
+    total = 0
+    for i in range(len(splits[0])):
+        print(i+1,'testing set with', num, 'trees')
+        results = run_tests(splits[0][i], splits[1][i], dt, True)
+        total += results[1]
+        total_correct += results[0]
+    print(total_correct, total, num)
+
 
