@@ -48,10 +48,50 @@ def random_optimizer(n):
             best = {'locations': locations, 'cost': calc_cost(locations)}
     return best
 
+def steepest_descent_optimizer(n):
+    best = random_optimizer(100)
+    possible_moves = [(0,1), (1,0), (0,-1), (-1,0), (1,-1), (-1,-1), (1,1), (-1,1)]
+    for _ in range(n):
+        all_iterations = []
+        for i in range(len(best['locations'])):
+            for move in possible_moves:
+                new_locations = best['locations']
+                test_change = (new_locations[i][0] + move[0], new_locations[i][1] + move[1])
+                if in_bounds(test_change):
+                    new_locations[i] = test_change
+                    all_iterations.append(new_locations)
+                else:
+                    continue
+        all_costs = [calc_cost(locations) for locations in all_iterations]
+        if min(all_costs) <= best['cost']:
+            best['locations'] = all_iterations[all_costs.index(min(all_costs))]
+            best['cost'] = min(all_costs)
+        else:
+            return best
+    return best      
 
-locations = [(0,0), (6,1), (2,2), (5,3), (4,4), (7,5), (1,6), (2,6)]
-show_board(locations)
-print(calc_cost(locations))
-for i in [10,50,100,500,1000]:
-    print('Best from',i,'combinations')
-    print(random_optimizer(i))
+def in_bounds(location):
+    x,y = location
+    if x < 0 or x > 7 or y < 0 or y > 7:
+        return False
+    else:
+        return True
+
+for n in [10, 50, 100, 500, 1000]:
+    print('Steepest descent for', n ,'iterations:')
+    result = steepest_descent_optimizer(n)
+    print(result)
+
+# while True:
+#     board = steepest_descent_optimizer(1000)
+#     if board['cost'] == 0:
+#         print(calc_cost(board['locations']))
+#         print(board)
+#         break
+
+# locations = [(0,0), (6,1), (2,2), (5,3), (4,4), (7,5), (1,6), (2,6)]
+# show_board(locations)
+# print(calc_cost(locations))
+# for i in [10,50,100,500,1000]:
+#     print('Best from',i,'combinations')
+#     print(random_optimizer(i))
