@@ -4,9 +4,9 @@ import collections
 
 class RandomForest:
 
-    def __init__(self, num_trees):
+    def __init__(self, num_trees, depth):
         self.num_trees = num_trees
-        self.trees = [DecisionTree('random') for i in range(num_trees)]
+        self.trees = [DecisionTree('random', max_depth = depth) for i in range(num_trees)]
 
     def fit(self, df):
         for tree in self.trees:

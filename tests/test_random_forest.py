@@ -20,6 +20,6 @@ data = [[2,13,'B'],[2,13,'B'],[2,13,'B'],[2,13,'B'],[2,13,'B'],[2,13,'B'],
 
 df = DataFrame.from_array(data, columns = ['x', 'y', 'class'])
 
-r = RandomForest(10)
+r = RandomForest(10, depth = 34)
 r.fit(df)
 print(r.predict({'x': 3, 'y': 10}))

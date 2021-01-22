@@ -3,7 +3,8 @@ from dataframe import DataFrame
 
 class Node:
 
-    def __init__(self, df, split_metric,check_splits = True):
+    def __init__(self, df, split_metric, depth, check_splits = True):
+        self.depth = depth
         self.df = df
         self.val = None
         self.low = None
@@ -61,8 +62,8 @@ class Node:
                 low.append(point)
             elif point[axis_index] >= split:
                 high.append(point)
-        low_node = Node(DataFrame.from_array(low, self.df.columns), self.split_metric, False)
-        high_node = Node(DataFrame.from_array(high, self.df.columns), self.split_metric, False)
+        low_node = Node(DataFrame.from_array(low, self.df.columns), self.split_metric, depth = int(self.depth) + 1, check_splits = False)
+        high_node = Node(DataFrame.from_array(high, self.df.columns), self.split_metric, depth = (self.depth+1), check_splits = False)
         nodes = [low_node, high_node]
         for split_node in nodes:
             goodness -= (len(split_node.row_indices)/len(self.row_indices)) * split_node.impurity
@@ -78,29 +79,32 @@ class Node:
         self.best_split_index = self.df.columns.index(self.possible_splits.to_array()[index][0])
         self.best_split = (self.possible_splits.to_array()[index][0],self.possible_splits.to_array()[index][1])
 
-    def split(self, if_once = False):
-        if self.low is None and self.high is None:
-            if self.final_split is False:
-                self.possible_splits = self.get_possible_splits()
-                self.get_best_split()
-                low = []
-                high = []
-                for entry in self.df.to_array():
-                    if entry[self.best_split_index] < self.best_split[1]:
-                        low.append(entry)
-                    elif entry[self.best_split_index] >= self.best_split[1]:
-                        high.append(entry)
-                self.low = Node(DataFrame.from_array(low, self.df.columns), self.split_metric)
-                self.high = Node(DataFrame.from_array(high, self.df.columns), self.split_metric)
-                if not if_once:
-                    self.low.split()
-                    self.high.split()
+    def split(self, if_once = False, depth_needed = None):
+        if depth_needed is None or self.depth < depth_needed:
+            if self.low is None and self.high is None:
+                if self.final_split is False:
+                    self.possible_splits = self.get_possible_splits()
+                    self.get_best_split()
+                    low = []
+                    high = []
+                    for entry in self.df.to_array():
+                        if entry[self.best_split_index] < self.best_split[1]:
+                            low.append(entry)
+                        elif entry[self.best_split_index] >= self.best_split[1]:
+                            high.append(entry)
+                    self.low = Node(DataFrame.from_array(low, self.df.columns), self.split_metric, (self.depth+1))
+                    self.high = Node(DataFrame.from_array(high, self.df.columns), self.split_metric, (self.depth+1))
+                    if not if_once:
+                        self.low.split(depth_needed = depth_needed)
+                        self.high.split(depth_needed = depth_needed)
+                else:
+                    return
             else:
+                if self.low is not None:
+                    self.low.split(if_once,depth_needed = depth_needed)
+                if self.high is  not None:
+                    self.high.split(if_once,depth_needed = depth_needed)
                 return
         else:
-            if self.low is not None:
-                self.low.split(if_once)
-            if self.high is  not None:
-                self.high.split(if_once)
             return
             
