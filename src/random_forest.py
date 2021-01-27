@@ -1,6 +1,5 @@
 from dataframe import DataFrame
 from decision_tree import DecisionTree
-import collections
 
 class RandomForest:
 
@@ -17,5 +16,16 @@ class RandomForest:
         for tree in self.trees:
             prediction = tree.classify(observation)
             classifications.append(prediction)
-        counted = collections.Counter(classifications)
-        return list(counted.keys())[0]
+        counted = self.count_predictons(classifications)
+        return self.return_max(counted)
+
+    def count_predictons(self, predictions):
+        counted = {}
+        for prediction in set(predictions):
+            counted[prediction] = predictions.count(prediction)
+        return counted
+
+    def return_max(self, counted):
+        keys = list(counted.keys())
+        counts = list(counted.values())
+        return keys[counts.index(max(counts))]

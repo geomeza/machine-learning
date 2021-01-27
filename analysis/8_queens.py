@@ -68,7 +68,7 @@ def steepest_descent_optimizer(n):
             best['cost'] = min(all_costs)
         else:
             return best
-    return best      
+    return best
 
 def in_bounds(location):
     x,y = location
