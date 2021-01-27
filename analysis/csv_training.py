@@ -62,12 +62,15 @@ for i in range(len(splits[0])):
     total += results[1]
     total_correct += results[0]
 
-print(total_correct, total)
+dt_results = {}
+
+dt_results['dt_gini'] =  round(total_correct/total,4)
+print(total_correct, total, round(total_correct/total,4))
 
 forests = [1,10,100,1000]
 
 for num in forests:
-    dt = RandomForest(num)
+    dt = RandomForest(num, depth = None)
     total_correct = 0
     total = 0
     for i in range(len(splits[0])):
@@ -75,6 +78,10 @@ for num in forests:
         results = run_tests(splits[0][i], splits[1][i], dt, True)
         total += results[1]
         total_correct += results[0]
-    print(total_correct, total, num)
+    dict_key = 'random_dt_' + str(num)
+    dt_results.update({dict_key :  round(total_correct/total,4)})
+    print(total_correct, total, num, round(total_correct/total,4))
+
+print(dt_results)
 
 
