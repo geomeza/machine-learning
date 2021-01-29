@@ -40,7 +40,7 @@ class DecisionTree:
         if node.impurity == 0:
             class_type = list(node.class_counts)[0]
             return class_type
-        if self.max_depth is None or node.depth != self.max_depth:
+        if node.best_split is not None and (self.max_depth is None or node.depth != self.max_depth):
             split_val = node.best_split[0]
             if point[split_val] < node.best_split[1]:
                 return self.classify(point, node = node.low)

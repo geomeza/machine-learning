@@ -46,16 +46,16 @@ class Node:
 
     def get_possible_splits(self):
         axis = [axis for axis in self.df.columns if axis != 'class' and axis != 'indices']
-        random_choice = random.choice(axis)
         all_splits = []
         for i in range(len(self.distinct_values)):
             for j in range(len(self.distinct_values[i]) - 1):
                 split_value = (self.distinct_values[i][j] + self.distinct_values[i][j+1])/2
                 all_splits.append([axis[i],split_value, self.calc_goodness(split_value, i)])
         if self.split_metric == 'random':
+            if len(list(set([split[0] for split in all_splits]))) == 0:
+                return []
+            random_choice = random.choice(list(set([split[0] for split in all_splits])))
             new_splits =  [split for split in all_splits if split[0] == random_choice]
-            if len(new_splits) == 0:
-                new_splits =  [split for split in all_splits if split[0] == axis[0]]
             all_splits = new_splits
         return DataFrame.from_array(all_splits,['axis', 'split_value', 'goodness of split'])
 
@@ -76,6 +76,10 @@ class Node:
         return goodness
 
     def get_best_split(self):
+        if self.possible_splits == []:
+            self.best_split = None
+            self.final_split = True
+            return
         goodness_of_all_splits = [split[2] for split in self.possible_splits.to_array()]
         best_split = max(goodness_of_all_splits)
         index = goodness_of_all_splits.index(best_split)
