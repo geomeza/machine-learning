@@ -3,7 +3,8 @@ from dataframe import DataFrame
 
 class Node:
 
-    def __init__(self, df, split_metric, depth, check_splits = True):
+    def __init__(self, df, split_metric, depth, check_splits = True, tree = None):
+        self.tree = tree
         self.depth = depth
         self.df = df
         self.val = None
@@ -68,8 +69,8 @@ class Node:
                 low.append(point)
             elif point[axis_index] >= split:
                 high.append(point)
-        low_node = Node(DataFrame.from_array(low, self.df.columns), self.split_metric, depth = int(self.depth) + 1, check_splits = False)
-        high_node = Node(DataFrame.from_array(high, self.df.columns), self.split_metric, depth = (self.depth+1), check_splits = False)
+        low_node = Node(DataFrame.from_array(low, self.df.columns), self.split_metric, depth = int(self.depth) + 1, check_splits = False, tree = self.tree)
+        high_node = Node(DataFrame.from_array(high, self.df.columns), self.split_metric, depth = (self.depth+1), check_splits = False, tree = self.tree)
         nodes = [low_node, high_node]
         for split_node in nodes:
             goodness -= (len(split_node.row_indices)/len(self.row_indices)) * split_node.impurity
@@ -81,6 +82,9 @@ class Node:
             self.final_split = True
             return
         goodness_of_all_splits = [split[2] for split in self.possible_splits.to_array()]
+        if len(goodness_of_all_splits) == 0:
+            self.best_split = None
+            return
         best_split = max(goodness_of_all_splits)
         index = goodness_of_all_splits.index(best_split)
         self.best_split_index = self.df.columns.index(self.possible_splits.to_array()[index][0])
@@ -92,6 +96,12 @@ class Node:
                 if self.final_split is False:
                     self.possible_splits = self.get_possible_splits()
                     self.get_best_split()
+                    if self.best_split is None:
+                        return
+                    if str(self.depth) in self.tree.splits:
+                        self.tree.splits[str(self.depth)].append(self.best_split)
+                    else:
+                        self.tree.splits[str(self.depth)] = [self.best_split]
                     low = []
                     high = []
                     for entry in self.df.to_array():
@@ -99,8 +109,8 @@ class Node:
                             low.append(entry)
                         elif entry[self.best_split_index] >= self.best_split[1]:
                             high.append(entry)
-                    self.low = Node(DataFrame.from_array(low, self.df.columns), self.split_metric, (self.depth+1))
-                    self.high = Node(DataFrame.from_array(high, self.df.columns), self.split_metric, (self.depth+1))
+                    self.low = Node(DataFrame.from_array(low, self.df.columns), self.split_metric, (self.depth+1), tree = self.tree)
+                    self.high = Node(DataFrame.from_array(high, self.df.columns), self.split_metric, (self.depth+1), tree = self.tree)
                     if not if_once:
                         self.low.split(depth_needed = depth_needed)
                         self.high.split(depth_needed = depth_needed)

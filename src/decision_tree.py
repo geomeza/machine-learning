@@ -8,6 +8,7 @@ class DecisionTree:
         self.root = None
         self.split_metric = split_metric
         self.max_depth = max_depth
+        self.splits = {'0': []}
 
     def split(self):
         self.root.split(if_once = True)
@@ -19,7 +20,7 @@ class DecisionTree:
     def initialize(self, df):
         self.df = df
         self.df = self.df.append_columns({'indices': [i for i in range(len(df.to_array()))]})
-        self.root = Node(self.df, self.split_metric,depth = 0, check_splits = False)
+        self.root = Node(self.df, self.split_metric,depth = 0, check_splits = False, tree = self)
 
     def show_tree(self, current_node = None, iter = 0):
         if current_node is None and iter == 0:
