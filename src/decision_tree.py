@@ -52,3 +52,4 @@ class DecisionTree:
             class_counts = list(node.class_counts.values())
             return class_types[class_counts.index(max(class_counts))]
             
+    

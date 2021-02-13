@@ -43,6 +43,8 @@ class Node:
                 for value in self.df.data_dict[axis]:
                     if value not in distinct[self.df.columns.index(axis)]:
                         distinct[self.df.columns.index(axis)].append(value)
+        for axis in distinct:
+            axis.sort()
         return distinct
 
     def get_possible_splits(self):
@@ -88,7 +90,7 @@ class Node:
         best_split = max(goodness_of_all_splits)
         index = goodness_of_all_splits.index(best_split)
         self.best_split_index = self.df.columns.index(self.possible_splits.to_array()[index][0])
-        self.best_split = (self.possible_splits.to_array()[index][0],self.possible_splits.to_array()[index][1])
+        self.best_split = (self.possible_splits.to_array()[index][0],self.possible_splits.to_array()[index][1], round(best_split, 3))
 
     def split(self, if_once = False, depth_needed = None):
         if depth_needed is None or self.depth < depth_needed:

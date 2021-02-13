@@ -11,7 +11,8 @@ filepath = path_to_datasets + filename
 df = DataFrame.from_csv(filepath)
 df = df.filter_columns(['Sex', 'Weight (lbs, Sep)', 'BMI (Sep)'])
 df = df.swap_columns(0,2)
-df = df.rename_columns(['bmi', 'weight', 'class'])
+df = df.swap_columns(0,1)
+df = df.rename_columns(['weight', 'bmi', 'class'])
 
 df = df.apply('weight', lambda x: float(x))
 df = df.apply('bmi', lambda x: float(x))
